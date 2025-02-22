@@ -30,7 +30,46 @@ async function run() {
     await taskCollection.createIndex({ _id: 1 });
 
     // User Registration
+    app.post("/user", async (req, res) => {
+      try {
+        const { email, displayName } = req.body;
+        if (!email || !displayName) return res.status(400).send({ message: "Missing email or display name" });
+
+        const existingUser = await userCollection.findOne({ email });
+        if (existingUser) return res.status(400).send({ message: "User already exists" });
+
+        const result = await userCollection.insertOne(req.body);
+        res.status(201).send(result);
+      } catch (error) {
+        res.status(500).send({ message: "Server error", error });
+      }
+    });
+
+    // Add a Task with Validation
+    app.post("/tasks", async (req, res) => {
+      try {
+        const { title, category } = req.body;
+        if (!title || !category) return res.status(400).send({ message: "Title and Category are required" });
+
+        const newTask = { ...req.body, timestamp: new Date().toISOString() };
+        const result = await taskCollection.insertOne(newTask);
+        res.status(201).send(result);
+      } catch (error) {
+        res.status(500).send({ message: "Failed to add task", error });
+      }
+    });
+
+ 
   
+
+
+
+ 
+
+    console.log("Connected to MongoDB and server is running!");
+  } catch (error) {
+    console.error("Error connecting to MongoDB:", error);
+  }
 }
 run().catch(console.dir);
 
