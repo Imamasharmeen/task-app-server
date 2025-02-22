@@ -59,10 +59,47 @@ async function run() {
       }
     });
 
- 
-  
+    // Get All Tasks
+    app.get("/tasks", async (req, res) => {
+      try {
+        const result = await taskCollection.find().toArray();
+        res.status(200).send(result);
+      } catch (error) {
+        res.status(500).send({ message: "Failed to fetch tasks", error });
+      }
+    });
 
+    // Edit a Task with Proper ID Validation
+    app.put("/tasks/:id", async (req, res) => {
+      try {
+        const { id } = req.params;
+        if (!ObjectId.isValid(id)) return res.status(400).send({ message: "Invalid task ID" });
 
+        const updatedTask = req.body;
+        const result = await taskCollection.updateOne({ _id: new ObjectId(id) }, { $set: updatedTask });
+
+        if (result.matchedCount === 0) return res.status(404).send({ message: "Task not found" });
+
+        res.status(200).send({ message: "Task updated successfully", result });
+      } catch (error) {
+        res.status(500).send({ message: "Failed to update task", error });
+      }
+    });
+
+    // Delete a Task with ID Validation
+    app.delete("/tasks/:id", async (req, res) => {
+      try {
+        const { id } = req.params;
+        if (!ObjectId.isValid(id)) return res.status(400).send({ message: "Invalid task ID" });
+
+        const result = await taskCollection.deleteOne({ _id: new ObjectId(id) });
+        if (result.deletedCount === 0) return res.status(404).send({ message: "Task not found" });
+
+        res.status(200).send({ message: "Task deleted successfully", result });
+      } catch (error) {
+        res.status(500).send({ message: "Failed to delete task", error });
+      }
+    });
 
  
 
