@@ -10,9 +10,9 @@ const { MongoClient, ServerApiVersion } = require("mongodb");
 const port = process.env.PORT || 5000;
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: ["http://localhost:5173", "https://singular-crumble-3496ac.netlify.app"] } });
+const io = new Server(server, { cors: { origin: ["http://localhost:5173", "https://task-app-woad-eta.vercel.app"] } });
 
-app.use(cors({ origin: ["http://localhost:5173", "https://singular-crumble-3496ac.netlify.app"], credentials: true }));
+app.use(cors({ origin: ["http://localhost:5173", "https://task-app-woad-eta.vercel.app"], credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
